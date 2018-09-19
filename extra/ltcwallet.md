@@ -20,5 +20,5 @@ LTWW9W8C8Fc6eeyYJUdWafnG6ZjMw3fTSm
 
 ```
 
-Once you have generated a wallet IDs file, you are ready to move on to the next step, which is generating a license key file for each wallet ID using the Litecoin Licence Manager [Licence Key Generator](../).
+Once you have generated a wallet IDs file, you are ready to move on to the next step, which is generating a license key file for each wallet ID using the Litecoin Licence Manager [Licence Key Generator](https://github.com/mbcladwell/LLMLitecoinLicenseGenerator).
 
