@@ -204,7 +204,7 @@ private static final long serialVersionUID = 1L;
     c.anchor = GridBagConstraints.LINE_END;
     panel1.add(label, c);
 
-    Integer[] trialExpiresDays = { 1, 7, 30, 180 };
+    Integer[] trialExpiresDays = {  2, 3, 7, 14, 30, 180 };
 
     trialExpiresDaysList = new JComboBox<>(trialExpiresDays);
     trialExpiresDaysList.setSelectedIndex(3);
@@ -223,7 +223,7 @@ private static final long serialVersionUID = 1L;
     c.anchor = GridBagConstraints.LINE_END;
     panel1.add(label, c);
 
-    Integer[] expiresDays = { 7, 30, 365, 3650, 36500  };
+    Integer[] expiresDays = {  30, 365, 1000, 3650, 36500  };
 
     expiresDaysList = new JComboBox<>(expiresDays);
     expiresDaysList.setSelectedIndex(4);
