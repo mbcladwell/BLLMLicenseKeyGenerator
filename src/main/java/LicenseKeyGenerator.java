@@ -47,8 +47,9 @@ private static final long serialVersionUID = 1L;
   private String unitOfCost;
   private Double cost;
   private int requiredConfirmations;
-  private int expiresInDays;
-  private int expiresInHours;
+  private int licenseExpiresInDays;
+  private int transactionExpiresInHours;
+  private int trialExpiresInDays;
   private boolean licensed;
   private JButton generateButton;
   private JButton getWalletIDsButton;
@@ -60,19 +61,26 @@ private static final long serialVersionUID = 1L;
   private JComboBox<Integer> confirmationsList;
   private JComboBox<Integer> expiresDaysList;  //license expiration
   private JComboBox<Integer> expiresList;     //transaction expiration
+  private JComboBox<Integer> trialExpiresDaysList;
   // private JComboBox<Boolean> licenseFlagBox;
 
   //Panel 2  inspector
 
   private JButton getLicenseButton;
   private llm.License lic;
-  private JLabel expiresInDaysLabel;
-  private JLabel expiresInHoursLabel;
+  private JLabel licenseExpiresInDaysLabel;
+  private JLabel transactionExpiresInHoursLabel;
+  private JLabel trialExpiresInDaysLabel;
   private JLabel licenseFileNameLabel;
    private JLabel walletIDLabel;
    private JLabel licenseIDLabel;
    private JLabel costLabel;
    private JLabel requiredConfirmationsLabel;
+  private JLabel booleanValuesLabel;
+  private JLabel trialStartDateLabel;
+  
+  private JLabel licenseGrantedDateLabel;
+    
   //  private JLabel isLicensedLabel;
   
  
@@ -178,7 +186,7 @@ private static final long serialVersionUID = 1L;
     c.anchor = GridBagConstraints.LINE_END;
     panel1.add(label, c);
 
-    Integer[] expiresHours = { 0, 3, 12, 24, 48, 72, 168, 720, 8760 };
+    Integer[] expiresHours = { 1, 3, 12, 24, 48, 72, 168, 720, 8760 };
 
     expiresList = new JComboBox<>(expiresHours);
     expiresList.setSelectedIndex(4);
@@ -189,10 +197,28 @@ private static final long serialVersionUID = 1L;
 
     panel1.add(expiresList, c);
 
+        label = new JLabel("Trial period expires in how many days?: ");
+    c.gridx = 0;
+    c.gridy = 6;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_END;
+    panel1.add(label, c);
+
+    Integer[] trialExpiresDays = { 1, 7, 30, 180 };
+
+    trialExpiresDaysList = new JComboBox<>(trialExpiresDays);
+    trialExpiresDaysList.setSelectedIndex(3);
+   c.gridx = 1;
+    c.gridy = 6;
+    c.gridwidth = 2;
+    c.anchor = GridBagConstraints.LINE_START;
+
+    panel1.add(trialExpiresDaysList, c);
+
     
     label = new JLabel("License expires in how many days?: ");
     c.gridx = 0;
-    c.gridy = 6;
+    c.gridy = 7;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_END;
     panel1.add(label, c);
@@ -202,7 +228,7 @@ private static final long serialVersionUID = 1L;
     expiresDaysList = new JComboBox<>(expiresDays);
     expiresDaysList.setSelectedIndex(4);
    c.gridx = 1;
-    c.gridy = 6;
+    c.gridy = 7;
     c.gridwidth = 2;
       c.anchor = GridBagConstraints.LINE_START;
 
@@ -212,14 +238,14 @@ private static final long serialVersionUID = 1L;
     
     label = new JLabel("License cost and currency: ");
     c.gridx = 0;
-    c.gridy = 7;
+    c.gridy = 8;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_END;
     panel1.add(label, c);
 
     costField = new JTextField(5);
     c.gridx = 1;
-    c.gridy = 7;
+    c.gridy = 8;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_START;
     panel1.add(costField, c);
@@ -231,7 +257,7 @@ private static final long serialVersionUID = 1L;
     costunits = new JComboBox<>(unitOfCost);
     costunits.setSelectedIndex(0);
    c.gridx = 2;
-    c.gridy = 7;
+    c.gridy = 8;
     c.gridwidth = 1;
     
     panel1.add(costunits, c);
@@ -373,62 +399,103 @@ c.gridx = 1;
     c.anchor = GridBagConstraints.LINE_END;
     panel2.add(label, c);
 
-    expiresInDaysLabel = new JLabel("NA");
+    licenseExpiresInDaysLabel = new JLabel("NA");
     c.gridx = 1;
     c.gridy = 5;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(expiresInDaysLabel, c);
-
-
-    label = new JLabel("Transaction expiration (hours): ");
+    panel2.add(licenseExpiresInDaysLabel, c);
+    /*
+    label = new JLabel("Trial period start date: ");
     c.gridx = 0;
     c.gridy = 6;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_END;
     panel2.add(label, c);
 
-  expiresInHoursLabel = new JLabel("NA");
+    trialStartDateLabel = new JLabel("NA");
     c.gridx = 1;
     c.gridy = 6;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(expiresInHoursLabel, c);
+    panel2.add(trialStartDateLabel, c);
+    */
+    label = new JLabel("Trial period expiration (days): ");
+    c.gridx = 0;
+    c.gridy = 7;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_END;
+    panel2.add(label, c);
+
+    trialExpiresInDaysLabel = new JLabel("NA");
+    c.gridx = 1;
+    c.gridy = 7;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_START;
+    panel2.add(trialExpiresInDaysLabel, c);
+
+    
+    label = new JLabel("Transaction expiration (hours): ");
+    c.gridx = 0;
+    c.gridy = 8;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_END;
+    panel2.add(label, c);
+
+    transactionExpiresInHoursLabel = new JLabel("NA");
+    c.gridx = 1;
+    c.gridy = 8;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_START;
+    panel2.add(transactionExpiresInHoursLabel, c);
 
     
     label = new JLabel("Required confirmations: ");
     c.gridx = 0;
-    c.gridy = 7;
+    c.gridy = 9;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_END;
     panel2.add(label, c);
 
     requiredConfirmationsLabel = new JLabel("NA");
     c.gridx = 1;
-    c.gridy = 7;
+    c.gridy = 9;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_START;
     panel2.add(requiredConfirmationsLabel, c);
 
-    /*
-      label = new JLabel("Licensed flag: ");
+    
+    label = new JLabel("Trial start date:");
     c.gridx = 0;
-    c.gridy = 8;
+    c.gridy = 10;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_END;
     panel2.add(label, c);
 
-  isLicensedLabel = new JLabel("NA");
+    trialStartDateLabel = new JLabel("NA");
     c.gridx = 1;
-    c.gridy = 8;
+    c.gridy = 10;
     c.gridwidth = 1;
     c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(isLicensedLabel, c);
-    */
-    
+    panel2.add(trialStartDateLabel, c);
+
+        label = new JLabel("License granted date:");
+    c.gridx = 0;
+    c.gridy = 11;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_END;
+    panel2.add(label, c);
+
+    licenseGrantedDateLabel = new JLabel("NA");
+    c.gridx = 1;
+    c.gridy = 11;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_START;
+    panel2.add(licenseGrantedDateLabel, c);
+
       JButton exitButton = new JButton("Exit");
     c.gridx = 0;
-    c.gridy = 9;
+    c.gridy = 12;
     c.gridwidth = 1;
       c.anchor = GridBagConstraints.LINE_END;
  
@@ -464,8 +531,9 @@ c.gridx = 1;
       }
       this.unitOfCost = String.valueOf(costunits.getSelectedItem());
       this.requiredConfirmations = (Integer)confirmationsList.getSelectedItem();
-      this.expiresInDays = (Integer)expiresDaysList.getSelectedItem();
-      this.expiresInHours = (Integer)expiresList.getSelectedItem();
+      this.licenseExpiresInDays = (Integer)expiresDaysList.getSelectedItem();
+      this.transactionExpiresInHours = (Integer)expiresList.getSelectedItem();
+      this.trialExpiresInDays = (Integer)trialExpiresDaysList.getSelectedItem();
       //      this.licensed = (Boolean)licenseFlagBox.getSelectedItem();
       this.generateLicenses();
       this.walletIDsFileSelected = true;
@@ -565,8 +633,9 @@ c.gridx = 1;
         lic.setCost(this.cost);
         lic.setUnitsOfCost(this.unitOfCost);
         lic.setRequiredConfirmations(this.requiredConfirmations);
-        lic.setExpiresInDays(this.expiresInDays);
-        lic.setExpiresInHours(this.expiresInHours);
+        lic.setLicenseExpiresInDays(this.licenseExpiresInDays);
+        lic.setTransactionExpiresInHours(this.transactionExpiresInHours);
+	lic.setTrialExpiresInDays(this.trialExpiresInDays);
         lic.setMerchantWalletID(walletids.get(i));
         walletids.get(i).length();
 
@@ -613,14 +682,16 @@ c.gridx = 1;
       in.close();
       file.close();
       this.licenseFileNameLabel.setText(filename);
-      this.expiresInDaysLabel.setText(String.valueOf(lic.getExpiresInDays()));
+      this.licenseExpiresInDaysLabel.setText(String.valueOf(lic.getLicenseExpiresInDays()));
       this.licenseIDLabel.setText(String.valueOf(lic.getLicenseID()));
       this.costLabel.setText(String.valueOf(lic.getCost()) + "  " + String.valueOf(lic.getUnitsOfCost()));
-      this.expiresInDaysLabel.setText(String.valueOf(lic.getExpiresInDays()));
-      this.expiresInHoursLabel.setText(String.valueOf(lic.getExpiresInHours()));
-       this.requiredConfirmationsLabel.setText(String.valueOf(lic.getRequiredConfirmations()));
+      this.transactionExpiresInHoursLabel.setText(String.valueOf(lic.getTransactionExpiresInHours()));
+      this.trialExpiresInDaysLabel.setText(String.valueOf(lic.getTrialExpiresInDays()));
+      this.requiredConfirmationsLabel.setText(String.valueOf(lic.getRequiredConfirmations()));
       this.walletIDLabel.setText(String.valueOf(lic.getMerchantWalletID()));
-      //      this.isLicensedLabel.setText(String.valueOf(lic.getLicensed()));
+      this.trialStartDateLabel.setText(String.valueOf(lic.getTrialStartDate()));
+      this.licenseGrantedDateLabel.setText(String.valueOf(lic.getLicenseGrantedDate()));
+      
   
       
       this.pack();

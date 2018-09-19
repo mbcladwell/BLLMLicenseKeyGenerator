@@ -1,18 +1,15 @@
 package llm;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-//import java.time.Instant;
-//import java.time.temporal.Temporal;
-//import java.time.temporal.ChronoUnit;
 import java.time.*;
-
+import java.time.LocalDate;
 
 public class License implements Serializable {
 
   private static final long serialVersionUID = 1L;
   private String merchantWalletID;
   private LocalDate licenseGrantedDate;
+  private LocalDate trialStartDate;
   private double ltcSubmitted;
   private double dollarSubmitted;
   private double cost;
@@ -21,29 +18,17 @@ public class License implements Serializable {
   private String licenseID;
   private String transactionID;
   private int requiredConfirmations;
-  private int expiresInDays; // license expiration
+  private int licenseExpiresInDays;
+  private int trialExpiresInDays;
   private String unitsOfCost;
-  private int expiresInHours; // transaction expiration
-  private boolean licensed;
+  private int transactionExpiresInHours;
 
-  public License() {
-    
-  }
+  public License() {}
 
-  public boolean getLicensed() {
-    try{
-    if( (this.expiresInDays - Period.between(this.licenseGrantedDate, LocalDate.now()).getDays()) > 0){return true;}else{return false;}
-    }catch(NullPointerException npe){return false;}
-  }
-
-  //  public void setLicensed(boolean b) {
-  //  this.licensed = b;
-  // }
-
-  public void setLicenseID( String s){
+  public void setLicenseID(String s) {
     this.licenseID = s;
   }
-  
+
   public String getLicenseID() {
     return this.licenseID;
   }
@@ -68,6 +53,13 @@ public class License implements Serializable {
     this.licenseGrantedDate = ld;
   }
 
+  public LocalDate getTrialStartDate() {
+    return this.trialStartDate;
+  }
+
+  public void setTrialStartDate(LocalDate ld) {
+    this.trialStartDate = ld;
+  }
 
   public String getTransactionID() {
     return this.transactionID;
@@ -77,20 +69,28 @@ public class License implements Serializable {
     this.transactionID = s;
   }
 
-  public int getExpiresInDays() {
-    return expiresInDays;
+  public int getLicenseExpiresInDays() {
+    return licenseExpiresInDays;
   }
 
-  public void setExpiresInDays(int eid) {
-    this.expiresInDays = eid;
+  public void setLicenseExpiresInDays(int eid) {
+    this.licenseExpiresInDays = eid;
   }
 
-  public int getExpiresInHours() {
-    return this.expiresInHours;
+  public int getTrialExpiresInDays() {
+    return trialExpiresInDays;
   }
 
-  public void setExpiresInHours(int i) {
-    this.expiresInHours = i;
+  public void setTrialExpiresInDays(int tid) {
+    this.trialExpiresInDays = tid;
+  }
+
+  public int getTransactionExpiresInHours() {
+    return this.transactionExpiresInHours;
+  }
+
+  public void setTransactionExpiresInHours(int i) {
+    this.transactionExpiresInHours = i;
   }
 
   public String getUnitsOfCost() {
