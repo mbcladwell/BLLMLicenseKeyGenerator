@@ -1,12 +1,12 @@
 ## LLM License Key Generator
 
-Before using the Litecoin License Manager License Key Generator you need to have produced text file of Litecoin wallet IDs.  Read how to generate this file [here](extras/ltcwallet.md).
+Before using the Litecoin License Manager License Key Generator you need to have produced text file of Litecoin wallet IDs.  Read how to generate this file [here](extra/ltcwallet.md).
 
 ## License Key Generation
 
 A license key is a serialize Java License object. Code for the License object can be found in the License.java file.  This object contains various parameters that you the developer (also referred to as the "merchant" in the code) will set.  To make setting parameters and serializing License objects easy, I have written an [app](https://github.com/mbcladwell/LLMLitecoinLicenseGenerator/tree/master/build/distributions) that will collect the parameters and serialize them into a License object for you.  Here is the main interface:
 
-![Generate Tab](extras/llmlkg-generate.png)
+![Generate Tab](extra/llmlkg-generate.png)
 
 Here is a table of the various License parameters and their usage:
 
@@ -22,7 +22,7 @@ Here is a table of the various License parameters and their usage:
 
 Once your license files have been serialized, you can switch to the inspect tab of the utility to confirm the values.
 
-![Inspect Tab](extras/llmlkg-inpect.png)
+![Inspect Tab](extra/llmlkg-inpect.png)
 
 
 A goal of the Litecoin License Manager is to allow you the developer to non-interactively collect licensing fees for your software.  Since there are no third party arbitrators of disputes, any issues that arise will force an interaction between you and your customers.  Therefore you want the process to be as easy as possible while at the same time discouraging cheating on the part of the users.  A few scenarios are outlined below, with increasing security, but also placing more burden on the customer.
