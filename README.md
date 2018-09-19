@@ -1,12 +1,12 @@
 ## LLM License Key Generator
 
-Before using the Litecoin License Manager License Key Generator you need to have produced text file of Litecoin wallet IDs.  Read how to generate this file [here](/lnsDFoKytr/2018/08/09/ltcwallet/).
+Before using the Litecoin License Manager License Key Generator you need to have produced text file of Litecoin wallet IDs.  Read how to generate this file [here](extras/ltcwallet.md).
 
 ## License Key Generation
 
 A license key is a serialize Java License object. Code for the License object can be found in the License.java file.  This object contains various parameters that you the developer (also referred to as the "merchant" in the code) will set.  To make setting parameters and serializing License objects easy, I have written an [app](https://github.com/mbcladwell/LLMLitecoinLicenseGenerator/tree/master/build/distributions) that will collect the parameters and serialize them into a License object for you.  Here is the main interface:
 
-![Generate Tab](images/llmlkg-generate.png)
+![Generate Tab](extras/llmlkg-generate.png)
 
 Here is a table of the various License parameters and their usage:
 
@@ -20,13 +20,21 @@ Here is a table of the various License parameters and their usage:
 |License expiration|Number of days for which the license is valid|
 |License cost|Cost specified in dollars or Litecoin|
 
+Once your license files have been serialized, you can switch to the inspect tab of the utility to confirm the values.
+
+![Inspect Tab](extras/llmlkg-inpect.png)
+
 
 A goal of the Litecoin License Manager is to allow you the developer to non-interactively collect licensing fees for your software.  Since there are no third party arbitrators of disputes, any issues that arise will force an interaction between you and your customers.  Therefore you want the process to be as easy as possible while at the same time discouraging cheating on the part of the users.  A few scenarios are outlined below, with increasing security, but also placing more burden on the customer.
 
 ### Scenario I: Shareware with the opportunity for donations
 
 Confirmations required = 0
+
 Transaction expiration = 8760 hours ( 1 year)
+
+Trial expiration = 180 days
+
 License expiration = 36500 days (100 years, essentially a perpetual license)
 
 In this scenario you are using the LLM as a means to provide the user with your wallet ID and make it easy to collect donations.  If a donation is provided, the "Licensed" panel will display for the user.
@@ -34,14 +42,18 @@ In this scenario you are using the LLM as a means to provide the user with your 
 ### Scenario II: Trial period
 
 Confirmations required = 3
-Transaction expiration = 48 hours 
-License expiration = 30 days 
 
-You are providing the user with 30 days to evaluate your software.  At the end of 30 days the licensed flag is set to false and the software is locked down. A payment will unlock the software for 30 days.  If a longer license period is desired, a separate license.ser file must be provided i.e. currently only 1 expiration value per license.ser is allowed.
+Transaction expiration = 48 hours 
+
+Trial expiration = 30 days
+
+License expiration = 365 days 
+
+You are providing the user with 30 days to evaluate your software.  At the end of 30 days the licensed flag is set to false and the software is locked down. A payment will unlock the software for 1 year. 
 
 ### Scenario III:  Feature lock down
 
-Similar to above only rather than locking down the entire application, only certain features are locked down by checking the value of <code>license.isLicensed()</code>
+Similar to above only rather than locking down the entire application, only certain features are locked down by checking the value of <code>LicenseManager.getLicenseStatus()</code>.  Certain features can be made available during the trial period, and then all or a subset can be locked down when the trial expires.
 
 ## Notes on parameters
 
