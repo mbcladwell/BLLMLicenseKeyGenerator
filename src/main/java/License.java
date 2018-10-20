@@ -10,7 +10,7 @@ public class License implements Serializable {
   private String merchantWalletID;
   private LocalDate licenseGrantedDate;
   private LocalDate trialStartDate;
-  private double ltcSubmitted;
+  private double satoshisSubmitted;
   private double dollarSubmitted;
   private double cost;
   private double amountPaid;
@@ -117,12 +117,12 @@ public class License implements Serializable {
     this.merchantWalletID = s;
   }
 
-  public void setLTCSubmitted(double d) {
-    this.ltcSubmitted = d;
+  public void setSatoshisSubmitted(double d) {
+    this.satoshisSubmitted = d;
   }
 
   public double getLTCSubmitted() {
-    return this.ltcSubmitted;
+    return this.satoshisSubmitted;
   }
 
   public void setDollarSubmitted(double d) {
