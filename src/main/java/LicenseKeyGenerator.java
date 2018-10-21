@@ -43,7 +43,10 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
   private JLabel fileNameLabel;
   private JLabel directoryNameLabel;
   private JLabel numberOfWalletIDsLabel;
+  private JLabel cryptoLabel;
+
   private JComboBox<String> costunits;
+  private String[] unitOfCostList;
   private JComboBox<Integer> confirmationsList;
   private JComboBox<Integer> expiresDaysList; // license expiration
   private JComboBox<Integer> expiresList; // transaction expiration
@@ -141,10 +144,20 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
     c.anchor = GridBagConstraints.LINE_START;
     panel1.add(numberOfWalletIDsLabel, c);
 
+    cryptoLabel = new JLabel();
+    c.gridx = 2;
+    c.gridy = 3;
+    c.gridwidth = 1;
+    c.gridheight = 5;
+    c.weightx = 1;
+    c.weighty = 1;
+    panel1.add(cryptoLabel, c);
+
     label = new JLabel("Required number of confirmations: ");
     c.gridx = 0;
     c.gridy = 4;
     c.gridwidth = 1;
+    c.gridheight = 1;
     c.anchor = GridBagConstraints.LINE_END;
     panel1.add(label, c);
 
@@ -228,10 +241,13 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
     panel1.add(costField, c);
     costField.getDocument().addDocumentListener(this);
 
-    String[] unitOfCost = {"Bitcoin", "Dollars", "Litecoin"};
+    //    new String[] unitOfCostList =  {"Dollars"};
 
-    costunits = new JComboBox<>(unitOfCost);
+    unitOfCostList = new String[] {"Dollars"};
+    // unitOfCostList[0] = "Dollars";
+    costunits = new JComboBox<String>(unitOfCostList);
     costunits.setSelectedIndex(0);
+    costunits.setEnabled(false);
     c.gridx = 2;
     c.gridy = 8;
     c.gridwidth = 1;
@@ -574,6 +590,37 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
       bufferedReader.close();
       numberOfWalletIDsLabel.setText(String.valueOf(walletids.size()));
       this.walletIDsFileSelected = true;
+      String firstCharacter = Character.toString(walletids.get(0).charAt(0));
+
+      switch (firstCharacter) {
+        case "1":
+          favoredCrypto = "Bitcoin";
+          costunits.addItem("Bitcoin");
+          break;
+        case "3":
+          favoredCrypto = "Bitcoin";
+          costunits.addItem("Bitcoin");
+          break;
+        case "L":
+          favoredCrypto = "Litecoin";
+          costunits.addItem("Litecoin");
+      }
+
+      costunits.setSelectedIndex(0);
+      costunits.setEnabled(true);
+      getWalletIDsButton.setEnabled(false);
+
+      switch (favoredCrypto) {
+        case "Bitcoin":
+          cryptoLabel.setIcon(
+              new ImageIcon(llmlkg.LicenseKeyGenerator.class.getResource("images/btc2.png")));
+          break;
+        case "Litecoin":
+          cryptoLabel.setIcon(
+              new ImageIcon(llmlkg.LicenseKeyGenerator.class.getResource("images/ltc2.png")));
+          break;
+      }
+
       if (this.walletIDsFileSelected && this.costEntered) {
         this.generateButton.setEnabled(true);
       }
