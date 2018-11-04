@@ -1,4 +1,4 @@
-package llmlkg;
+package bllmlkg;
 
 import java.awt.*;
 import java.awt.Toolkit;
@@ -56,7 +56,7 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
   // Panel 2  inspector
 
   private JButton getLicenseButton;
-  private llm.License lic;
+  private bllm.License lic;
   private JLabel licenseExpiresInDaysLabel;
   private JLabel transactionExpiresInHoursLabel;
   private JLabel trialExpiresInDaysLabel;
@@ -73,7 +73,7 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
   //  private JLabel isLicensedLabel;
 
   public LicenseKeyGenerator() {
-    this.setTitle("LLM License Key Generator  " + LocalDate.now());
+    this.setTitle("BLLM License Key Generator  " + LocalDate.now());
     this.setResizable(true);
 
     // Image img = new
@@ -613,11 +613,11 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
       switch (favoredCrypto) {
         case "Bitcoin":
           cryptoLabel.setIcon(
-              new ImageIcon(llmlkg.LicenseKeyGenerator.class.getResource("images/btc2.png")));
+              new ImageIcon(bllmlkg.LicenseKeyGenerator.class.getResource("images/btc2.png")));
           break;
         case "Litecoin":
           cryptoLabel.setIcon(
-              new ImageIcon(llmlkg.LicenseKeyGenerator.class.getResource("images/ltc2.png")));
+              new ImageIcon(bllmlkg.LicenseKeyGenerator.class.getResource("images/ltc2.png")));
           break;
       }
 
@@ -637,7 +637,7 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
       for (int i = 1; i < walletids.size(); i++) {
 
         String uuid = UUID.randomUUID().toString();
-        llm.License lic = new llm.License();
+        bllm.License lic = new bllm.License();
         lic.setLicenseID(uuid);
         lic.setCost(this.cost);
         lic.setUnitsOfCost(this.unitOfCost);
@@ -684,7 +684,7 @@ public class LicenseKeyGenerator extends JFrame implements ActionListener, Docum
       ObjectInputStream in = new ObjectInputStream(file);
 
       // Method for serialization of object
-      lic = (llm.License) in.readObject();
+      lic = (bllm.License) in.readObject();
 
       in.close();
       file.close();
