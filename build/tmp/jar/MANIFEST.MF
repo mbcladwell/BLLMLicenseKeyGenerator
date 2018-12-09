@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Implementation-Title: License Key Generator
-Implementation-Version: 0.12
-provider: net.stihie
-Main-Class: bllmlkg.LicenseKeyGenerator
-
