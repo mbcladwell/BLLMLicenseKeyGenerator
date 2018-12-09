@@ -5,8 +5,12 @@ import java.time.*;
 import java.time.LocalDate;
 
 public class License implements Serializable {
-
+  /**
+   * Merchant chooses the desired denomination of payment. bllm tracks favored payment method but
+   * also converts to dollars and satoshis at the time of payment.
+   */
   private static final long serialVersionUID = 1L;
+
   private String merchantWalletID;
   private LocalDate licenseGrantedDate;
   private LocalDate trialStartDate;
@@ -21,6 +25,7 @@ public class License implements Serializable {
   private int licenseExpiresInDays;
   private int trialExpiresInDays;
   private String unitsOfCost;
+  private String unitsOfPayment;
   private int transactionExpiresInHours;
 
   public License() {}
@@ -99,6 +104,14 @@ public class License implements Serializable {
 
   public void setUnitsOfCost(String s) {
     this.unitsOfCost = s;
+  }
+
+  public String getUnitsOfPayment() {
+    return this.unitsOfCost;
+  }
+
+  public void setUnitsOfPayment(String s) {
+    this.unitsOfPayment = s;
   }
 
   public int getRequiredConfirmations() {
