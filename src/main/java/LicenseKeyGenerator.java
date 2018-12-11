@@ -6,6 +6,8 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import javax.crypto.*;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -59,19 +62,12 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   private JComboBox<Integer> confirmationsList;
   private JComboBox<Integer> expiresDaysList;
   private JComboBox<Integer> expiresList;
-
   private JComboBox<Integer> trialExpiresDaysList;
-
   private JButton getLicenseButton;
-
   private License lic;
-
   private JLabel licenseExpiresInDaysLabel;
-
   private JLabel transactionExpiresInHoursLabel;
-
   private JLabel trialExpiresInDaysLabel;
-
   private JLabel licenseFileNameLabel;
   private JLabel walletIDLabel;
   private JLabel licenseIDLabel;
@@ -81,6 +77,9 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   private JLabel trialStartDateLabel;
   private JLabel favoredCrytpocurrencyLabel;
   private JLabel licenseGrantedDateLabel;
+  private SecretKey key64 =
+      new SecretKeySpec(new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}, "Blowfish");
+  private Cipher cipher = Cipher.getInstance("Blowfish");
 
   public LicenseKeyGenerator() {
     setTitle("BLLM License Key Generator  " + java.time.LocalDate.now());
@@ -610,7 +609,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       bufferedReader.close();
       numberOfWalletIDsLabel.setText(String.valueOf(walletids.size()));
       walletIDsFileSelected = true;
-      String firstCharacter = Character.toString(((String) walletids.get(0)).charAt(0));
+      String firstCharacter = Character.toString((walletids.get(0)).charAt(0));
 
       switch (firstCharacter) {
         case "1":
@@ -674,28 +673,27 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
         lic.setLicenseExpiresInDays(licenseExpiresInDays);
         lic.setTransactionExpiresInHours(transactionExpiresInHours);
         lic.setTrialExpiresInDays(trialExpiresInDays);
-        lic.setMerchantWalletID((String) walletids.get(i));
-        ((String) walletids.get(i)).length();
+        lic.setMerchantWalletID(walletids.get(i));
+        (walletids.get(i)).length();
 
+        cipher.init(Cipher.ENCRYPT_MODE, key64);
+        SealedObject sealedObject = new SealedObject(lic, cipher);
         String dirname =
             new String(
-                ((String) walletids.get(i))
-                    .substring(
-                        ((String) walletids.get(i)).length() - 8,
-                        ((String) walletids.get(i)).length()));
+                (walletids.get(i))
+                    .substring((walletids.get(i)).length() - 8, (walletids.get(i)).length()));
 
         new File(directoryNameLabel.getText() + "/license/" + dirname).mkdirs();
 
-        String filename =
+        String fileName =
             new String(directoryNameLabel.getText() + "/license/" + dirname + "/license.ser");
 
-        FileOutputStream file = new FileOutputStream(filename);
-        ObjectOutputStream out = new ObjectOutputStream(file);
-
-        out.writeObject(lic);
-
-        out.close();
-        file.close();
+        CipherOutputStream cipherOutputStream =
+            new CipherOutputStream(
+                new BufferedOutputStream(new FileOutputStream(fileName)), cipher);
+        ObjectOutputStream outputStream = new ObjectOutputStream(cipherOutputStream);
+        outputStream.writeObject(sealedObject);
+        outputStream.close();
       }
       JOptionPane.showMessageDialog(this, "Licenses have been serialized.", "Information", 1);
     } catch (IOException ex) {
@@ -703,16 +701,23 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     }
   }
 
-  public void readLicenseFile(String filename) {
+  public void readLicenseFile(String fileName) {
     try {
-      FileInputStream file = new FileInputStream(filename);
-      ObjectInputStream in = new ObjectInputStream(file);
 
-      lic = ((License) in.readObject());
+      CipherInputStream cipherInputStream =
+          new CipherInputStream(new BufferedInputStream(new FileInputStream(fileName)), cipher);
+      ObjectInputStream inputStream = new ObjectInputStream(cipherInputStream);
+      SealedObject sealedObject = (SealedObject) inputStream.readObject();
+      lic = (License) sealedObject.getObject(cipher);
 
-      in.close();
-      file.close();
-      licenseFileNameLabel.setText(filename);
+      // FileInputStream file = new FileInputStream(filename);
+      // ObjectInputStream in = new ObjectInputStream(file);
+
+      // lic = ((License) in.readObject());
+
+      inputStream.close();
+
+      licenseFileNameLabel.setText(fileName);
       licenseExpiresInDaysLabel.setText(String.valueOf(lic.getLicenseExpiresInDays()));
       licenseIDLabel.setText(String.valueOf(lic.getLicenseID()));
       costLabel.setText(

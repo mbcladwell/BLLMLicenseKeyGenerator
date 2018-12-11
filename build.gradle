@@ -97,7 +97,7 @@ task signAll(dependsOn: [copyFiles]) << {
 }
 
 
-task copyToWeb(type: Copy) {
+task copyToWeb(type: Copy, dependsOn: [signAll]) {
    // from configurations.runtime
     from("webstart/signed")
     into("/home/mbc/syncd/stihie/source/_posts/2018-08-09-bllmlkg")
