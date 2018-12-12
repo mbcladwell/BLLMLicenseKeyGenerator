@@ -6,14 +6,11 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.security.*;
 import java.util.List;
@@ -35,7 +32,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     implements java.awt.event.ActionListener, javax.swing.event.DocumentListener {
   private static final long serialVersionUID = 1L;
   private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-  private static List<String> walletids = new java.util.ArrayList();
+  private static List<String> walletids = new java.util.ArrayList<String>();
   private boolean walletIDsFileSelected = false;
   private boolean costEntered = false;
 
@@ -54,33 +51,22 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   private JLabel directoryNameLabel;
   private JLabel numberOfWalletIDsLabel;
   private JLabel cryptoLabel;
+  private JLabel favoredCrytpocurrencyLabel;
+
   private JComboBox<String> costunits;
   private String[] cryptoOptionsWSelect = {"Select", "Bitcoin", "Litecoin"};
   private String[] cryptoOptions = {"Bitcoin", "Litecoin"};
   private String[] unitOfCostList = {"Dollars"};
   private DefaultComboBoxModel<String> litecoinUnitOfCostList =
-      new DefaultComboBoxModel(new String[] {"Dollars", "Litecoin"});
+      new DefaultComboBoxModel<String>(new String[] {"Dollars", "Litecoin"});
   private DefaultComboBoxModel<String> bitcoinUnitOfCostList =
-      new DefaultComboBoxModel(new String[] {"Dollars", "Bitcoin"});
+      new DefaultComboBoxModel<String>(new String[] {"Dollars", "Bitcoin"});
   private JComboBox<String> cryptocurrencyList;
   private JComboBox<Integer> confirmationsList;
   private JComboBox<Integer> expiresDaysList;
   private JComboBox<Integer> expiresList;
   private JComboBox<Integer> trialExpiresDaysList;
-  private JButton getLicenseButton;
   private License lic;
-  private JLabel licenseExpiresInDaysLabel;
-  private JLabel transactionExpiresInHoursLabel;
-  private JLabel trialExpiresInDaysLabel;
-  private JLabel licenseFileNameLabel;
-  private JLabel walletIDLabel;
-  private JLabel licenseIDLabel;
-  private JLabel costLabel;
-  private JLabel requiredConfirmationsLabel;
-  private JLabel booleanValuesLabel;
-  private JLabel trialStartDateLabel;
-  private JLabel favoredCrytpocurrencyLabel;
-  private JLabel licenseGrantedDateLabel;
   private SecretKey key64;
   private Cipher cipher;
   private String keyString = new String("nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ");
@@ -174,7 +160,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     panel1.add(favoredCrytpocurrencyLabel, c);
     favoredCrytpocurrencyLabel.setVisible(false);
 
-    cryptocurrencyList = new JComboBox(cryptoOptionsWSelect);
+    cryptocurrencyList = new JComboBox<String>(cryptoOptionsWSelect);
     cryptocurrencyList.setSelectedIndex(0);
     c.gridx = 1;
     c.gridy = 4;
@@ -193,9 +179,9 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     c.anchor = GridBagConstraints.LINE_END;
     panel1.add(label, c);
 
-    Integer[] confirmationOptions = {Integer.valueOf(0), Integer.valueOf(3), Integer.valueOf(6)};
+    Integer[] confirmationOptions = {0, 3, 6};
 
-    confirmationsList = new JComboBox(confirmationOptions);
+    confirmationsList = new JComboBox<Integer>(confirmationOptions);
     confirmationsList.setSelectedIndex(1);
     c.gridx = 1;
     c.gridy = 5;
@@ -223,7 +209,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       Integer.valueOf(8760)
     };
 
-    expiresList = new JComboBox(expiresHours);
+    expiresList = new JComboBox<Integer>(expiresHours);
     expiresList.setSelectedIndex(4);
     c.gridx = 1;
     c.gridy = 6;
@@ -248,7 +234,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       Integer.valueOf(180)
     };
 
-    trialExpiresDaysList = new JComboBox(trialExpiresDays);
+    trialExpiresDaysList = new JComboBox<Integer>(trialExpiresDays);
     trialExpiresDaysList.setSelectedIndex(3);
     c.gridx = 1;
     c.gridy = 7;
@@ -272,7 +258,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       Integer.valueOf(36500)
     };
 
-    expiresDaysList = new JComboBox(expiresDays);
+    expiresDaysList = new JComboBox<Integer>(expiresDays);
     expiresDaysList.setSelectedIndex(4);
     c.gridx = 1;
     c.gridy = 8;
@@ -296,7 +282,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     panel1.add(costField, c);
     costField.getDocument().addDocumentListener(this);
 
-    costunits = new JComboBox(unitOfCostList);
+    costunits = new JComboBox<String>(unitOfCostList);
     costunits.setSelectedIndex(0);
     costunits.setEnabled(false);
     c.gridx = 2;
@@ -331,177 +317,9 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     generateButton.setEnabled(false);
     generateButton.addActionListener(this);
 
-    JComponent panel2 = new javax.swing.JPanel(new java.awt.GridBagLayout());
+    JComponent panel2 = new InspectPanel(this);
     tabbedPane.addTab("Inspect", null, panel2, "View license parameters");
     tabbedPane.setMnemonicAt(1, 50);
-
-    getLicenseButton = new JButton("Select license file...");
-
-    getLicenseButton.setToolTipText("Select file");
-
-    c.gridx = 0;
-    c.gridy = 0;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    c.insets = new java.awt.Insets(5, 5, 5, 5);
-    c.weightx = 1.0D;
-    c.weighty = 1.0D;
-    panel2.add(getLicenseButton, c);
-    getLicenseButton.addActionListener(this);
-
-    label = new JLabel("Filename: ");
-    c.gridx = 0;
-    c.gridy = 1;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    licenseFileNameLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 1;
-    c.gridwidth = 2;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(licenseFileNameLabel, c);
-
-    label = new JLabel("Wallet ID: ");
-    c.gridx = 0;
-    c.gridy = 2;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    walletIDLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 2;
-    c.gridwidth = 2;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(walletIDLabel, c);
-
-    label = new JLabel("License ID:: ");
-    c.gridx = 0;
-    c.gridy = 3;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    licenseIDLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 3;
-    c.gridwidth = 2;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(licenseIDLabel, c);
-
-    label = new JLabel("Cost: ");
-    c.gridx = 0;
-    c.gridy = 4;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    costLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 4;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(costLabel, c);
-
-    label = new JLabel("License expiration (days): ");
-    c.gridx = 0;
-    c.gridy = 5;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    licenseExpiresInDaysLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 5;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(licenseExpiresInDaysLabel, c);
-
-    label = new JLabel("Trial period expiration (days): ");
-    c.gridx = 0;
-    c.gridy = 7;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    trialExpiresInDaysLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 7;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(trialExpiresInDaysLabel, c);
-
-    label = new JLabel("Transaction expiration (hours): ");
-    c.gridx = 0;
-    c.gridy = 8;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    transactionExpiresInHoursLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 8;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(transactionExpiresInHoursLabel, c);
-
-    label = new JLabel("Required confirmations: ");
-    c.gridx = 0;
-    c.gridy = 9;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    requiredConfirmationsLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 9;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(requiredConfirmationsLabel, c);
-
-    label = new JLabel("Trial start date:");
-    c.gridx = 0;
-    c.gridy = 10;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    trialStartDateLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 10;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(trialStartDateLabel, c);
-
-    label = new JLabel("License granted date:");
-    c.gridx = 0;
-    c.gridy = 11;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-    panel2.add(label, c);
-
-    licenseGrantedDateLabel = new JLabel("NA");
-    c.gridx = 1;
-    c.gridy = 11;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_START;
-    panel2.add(licenseGrantedDateLabel, c);
-
-    JButton exitButton = new JButton("Exit");
-    c.gridx = 0;
-    c.gridy = 12;
-    c.gridwidth = 1;
-    c.anchor = GridBagConstraints.LINE_END;
-
-    panel2.add(exitButton, c);
-    exitButton.addActionListener(
-        (new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            dispose();
-          }
-        }));
 
     JComponent panel3 = new CryptoPanel(this);
     tabbedPane.addTab("Encrypt", null, panel3, "View license parameters");
@@ -546,17 +364,6 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
         this.fileNameLabel.setText(file.getPath());
         this.directoryNameLabel.setText(file.getParent());
         this.readWalletIDfile();
-      } else {
-
-      }
-    }
-
-    if (e.getSource() == getLicenseButton) {
-      final JFileChooser fc = new JFileChooser();
-      int returnVal = fc.showOpenDialog(LicenseKeyGenerator.this);
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-        File file = fc.getSelectedFile();
-        this.readLicenseFile(file.getPath());
       } else {
 
       }
@@ -690,8 +497,8 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
         lic.setMerchantWalletID(walletids.get(i));
         (walletids.get(i)).length();
 
-        String string = new String("nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ");
-        key64 = new SecretKeySpec(string.getBytes(), "Blowfish");
+        // String string = new String("nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ");
+        key64 = new SecretKeySpec(getKeyString().getBytes(), "Blowfish");
         cipher = Cipher.getInstance("Blowfish");
         cipher.init(Cipher.ENCRYPT_MODE, key64);
         SealedObject sealedObject = new SealedObject(lic, cipher);
@@ -726,58 +533,12 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     }
   }
 
-  public void readLicenseFile(String fileName) {
-    try {
-      LOGGER.info("Secret key: " + keyString);
-      key64 = new SecretKeySpec(keyString.getBytes(), "Blowfish");
-      cipher = Cipher.getInstance("Blowfish");
-      cipher.init(Cipher.DECRYPT_MODE, key64);
-
-      CipherInputStream cipherInputStream =
-          new CipherInputStream(new BufferedInputStream(new FileInputStream(fileName)), cipher);
-      ObjectInputStream inputStream = new ObjectInputStream(cipherInputStream);
-      SealedObject sealedObject = (SealedObject) inputStream.readObject();
-      lic = (License) sealedObject.getObject(cipher);
-
-      // FileInputStream file = new FileInputStream(filename);
-      // ObjectInputStream in = new ObjectInputStream(file);
-
-      // lic = ((License) in.readObject());
-
-      inputStream.close();
-
-      licenseFileNameLabel.setText(fileName);
-      licenseExpiresInDaysLabel.setText(String.valueOf(lic.getLicenseExpiresInDays()));
-      licenseIDLabel.setText(String.valueOf(lic.getLicenseID()));
-      costLabel.setText(
-          String.valueOf(lic.getCost()) + "  " + String.valueOf(lic.getUnitsOfCost()));
-      transactionExpiresInHoursLabel.setText(String.valueOf(lic.getTransactionExpiresInHours()));
-      trialExpiresInDaysLabel.setText(String.valueOf(lic.getTrialExpiresInDays()));
-      requiredConfirmationsLabel.setText(String.valueOf(lic.getRequiredConfirmations()));
-      walletIDLabel.setText(String.valueOf(lic.getMerchantWalletID()));
-      trialStartDateLabel.setText(String.valueOf(lic.getTrialStartDate()));
-      licenseGrantedDateLabel.setText(String.valueOf(lic.getLicenseGrantedDate()));
-
-      pack();
-    } catch (IOException ex) {
-      System.out.println("IOException is caught");
-    } catch (ClassNotFoundException ex) {
-      System.out.println("ClassNotFoundException is caught");
-    } catch (IllegalBlockSizeException ex) {
-
-    } catch (BadPaddingException ex) {
-
-    } catch (InvalidKeyException ex) {
-
-    } catch (NoSuchAlgorithmException ex) {
-
-    } catch (NoSuchPaddingException ex) {
-
-    }
-  }
-
   public void setKeyString(String s) {
     this.keyString = s;
+  }
+
+  public String getKeyString() {
+    return this.keyString;
   }
 
   public static void main(String[] args) {
