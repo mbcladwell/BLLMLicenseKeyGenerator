@@ -15,8 +15,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.security.*;
 import java.util.List;
+import java.util.logging.*;
 import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -31,6 +34,7 @@ import javax.swing.event.*;
 public class LicenseKeyGenerator extends javax.swing.JFrame
     implements java.awt.event.ActionListener, javax.swing.event.DocumentListener {
   private static final long serialVersionUID = 1L;
+  private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
   private static List<String> walletids = new java.util.ArrayList();
   private boolean walletIDsFileSelected = false;
   private boolean costEntered = false;
@@ -77,13 +81,17 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   private JLabel trialStartDateLabel;
   private JLabel favoredCrytpocurrencyLabel;
   private JLabel licenseGrantedDateLabel;
-  private SecretKey key64 =
-      new SecretKeySpec(new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}, "Blowfish");
-  private Cipher cipher = Cipher.getInstance("Blowfish");
+  private SecretKey key64;
+  private Cipher cipher;
+  private String keyString = new String("nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ");
 
   public LicenseKeyGenerator() {
     setTitle("BLLM License Key Generator  " + java.time.LocalDate.now());
     setResizable(true);
+    LOGGER.setLevel(Level.INFO);
+
+    // https://randomkeygen.com/
+    // https://stackoverflow.com/questions/16950833/is-there-an-easy-way-to-encrypt-a-java-object
 
     JTabbedPane tabbedPane = new JTabbedPane();
     JComponent panel1 = new javax.swing.JPanel(new java.awt.GridBagLayout());
@@ -495,6 +503,10 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
           }
         }));
 
+    JComponent panel3 = new CryptoPanel(this);
+    tabbedPane.addTab("Encrypt", null, panel3, "View license parameters");
+    tabbedPane.setMnemonicAt(1, 50);
+
     getContentPane().add(tabbedPane, "Center");
     pack();
     setLocation(
@@ -635,7 +647,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       }
 
     } catch (IOException ex) {
-      System.out.println("IOException is caught");
+      LOGGER.info("IOException is caught");
     }
   }
 
@@ -661,6 +673,8 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   }
 
   public void generateLicenses() {
+    LOGGER.info("Secret key: " + keyString);
+
     try {
       for (int i = 1; i < walletids.size(); i++) {
         String uuid = java.util.UUID.randomUUID().toString();
@@ -676,6 +690,9 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
         lic.setMerchantWalletID(walletids.get(i));
         (walletids.get(i)).length();
 
+        String string = new String("nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ");
+        key64 = new SecretKeySpec(string.getBytes(), "Blowfish");
+        cipher = Cipher.getInstance("Blowfish");
         cipher.init(Cipher.ENCRYPT_MODE, key64);
         SealedObject sealedObject = new SealedObject(lic, cipher);
         String dirname =
@@ -698,11 +715,23 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       JOptionPane.showMessageDialog(this, "Licenses have been serialized.", "Information", 1);
     } catch (IOException ex) {
       System.out.println("IOException is caught");
+    } catch (IllegalBlockSizeException ex) {
+
+    } catch (NoSuchAlgorithmException ex) {
+
+    } catch (InvalidKeyException ex) {
+
+    } catch (NoSuchPaddingException ex) {
+
     }
   }
 
   public void readLicenseFile(String fileName) {
     try {
+      LOGGER.info("Secret key: " + keyString);
+      key64 = new SecretKeySpec(keyString.getBytes(), "Blowfish");
+      cipher = Cipher.getInstance("Blowfish");
+      cipher.init(Cipher.DECRYPT_MODE, key64);
 
       CipherInputStream cipherInputStream =
           new CipherInputStream(new BufferedInputStream(new FileInputStream(fileName)), cipher);
@@ -734,7 +763,21 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       System.out.println("IOException is caught");
     } catch (ClassNotFoundException ex) {
       System.out.println("ClassNotFoundException is caught");
+    } catch (IllegalBlockSizeException ex) {
+
+    } catch (BadPaddingException ex) {
+
+    } catch (InvalidKeyException ex) {
+
+    } catch (NoSuchAlgorithmException ex) {
+
+    } catch (NoSuchPaddingException ex) {
+
     }
+  }
+
+  public void setKeyString(String s) {
+    this.keyString = s;
   }
 
   public static void main(String[] args) {

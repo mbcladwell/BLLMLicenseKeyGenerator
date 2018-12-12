@@ -10,7 +10,7 @@ public class CryptoPanel extends javax.swing.JPanel
     implements java.awt.event.ActionListener {
 
   private static final long serialVersionUID = 1L;
-  private JLabel text1 = new JLabel("License.ser files are encrypted.");
+  private JLabel text1 = new JLabel("License.ser files are automatically encrypted.");
   private JLabel text2 = new JLabel("Enter a private key below or use the one provided.");
   private JLabel text3 = new JLabel("Private key: ");
   private JTextField keyField;
@@ -18,6 +18,8 @@ public class CryptoPanel extends javax.swing.JPanel
   private JButton cancelButton;
   private JLabel text4 = new JLabel("This new key must be utilized in the DialogLicenseManager");
   private JLabel text5 = new JLabel("constructor!");
+  private JLabel text6 = new JLabel("Recomendation: use the provided key.");
+
   private LicenseKeyGenerator parent;
 
   private JLabel checkmarkLabel;
@@ -50,7 +52,7 @@ public class CryptoPanel extends javax.swing.JPanel
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridwidth = 4;
     add(keyField, c);
-    keyField.getDocument().addDocumentListener(this);
+    //   keyField.getDocument().addDocumentListener(this);
 
     updateButton = new JButton("Update key");
     c.gridx = 0;
@@ -66,6 +68,12 @@ public class CryptoPanel extends javax.swing.JPanel
     c.gridy = 3;
     c.gridwidth = 1;
     add(checkmarkLabel, c);
+
+    c.gridx = 0;
+    c.gridy = 4;
+    c.gridwidth = 5;
+    c.anchor = GridBagConstraints.LINE_START;
+    add(text6, c);
 
     c.gridx = 0;
     c.gridy = 4;
@@ -87,8 +95,10 @@ public class CryptoPanel extends javax.swing.JPanel
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() == updateButton) {
       try {
+        parent.setKeyString(keyField.getText());
         checkmarkLabel.setIcon(
             new javax.swing.ImageIcon(CryptoPanel.class.getResource("images/green-check.png")));
+        text6.setVisible(false);
         text4.setVisible(true);
         text5.setVisible(true);
 
