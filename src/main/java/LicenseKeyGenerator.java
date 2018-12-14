@@ -42,7 +42,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   private int licenseExpiresInDays;
   private int transactionExpiresInHours;
   public int trialExpiresInDays;
-  private String unitOfPayment;
+  private String unitsOfRequestedPayment;
   private boolean licensed;
   private JButton generateButton;
   private JButton getWalletIDsButton;
@@ -374,13 +374,13 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
 
       switch ((String) cryptocurrencyList.getSelectedItem()) {
         case "Bitcoin":
-          unitOfPayment = "Bitcoin";
+          unitsOfRequestedPayment = "Bitcoin";
           costunits.setModel(bitcoinUnitOfCostList);
           displayCryptoIcon();
 
           break;
         case "Litecoin":
-          unitOfPayment = "Litecoin";
+          unitsOfRequestedPayment = "Litecoin";
           costunits.setModel(litecoinUnitOfCostList);
 
           displayCryptoIcon();
@@ -432,7 +432,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
 
       switch (firstCharacter) {
         case "1":
-          unitOfPayment = "Bitcoin";
+          unitsOfRequestedPayment = "Bitcoin";
           costunits.addItem("Bitcoin");
           displayCryptoIcon();
           break;
@@ -441,7 +441,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
           cryptocurrencyList.setVisible(true);
           break;
         case "L":
-          unitOfPayment = "Litecoin";
+          unitsOfRequestedPayment = "Litecoin";
           costunits.addItem("Litecoin");
           displayCryptoIcon();
           break;
@@ -463,7 +463,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     costunits.setEnabled(true);
     getWalletIDsButton.setEnabled(false);
 
-    switch (unitOfPayment) {
+    switch (unitsOfRequestedPayment) {
       case "Bitcoin":
         cryptoLabel.setIcon(
             new javax.swing.ImageIcon(LicenseKeyGenerator.class.getResource("images/btc2.png")));
@@ -489,7 +489,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
         lic.setLicenseID(uuid);
         lic.setCost(cost.doubleValue());
         lic.setUnitsOfCost(unitOfCost);
-        lic.setUnitsOfPayment(unitOfPayment);
+        lic.setUnitsOfRequestedPayment(unitsOfRequestedPayment);
         lic.setRequiredConfirmations(requiredConfirmations);
         lic.setLicenseExpiresInDays(licenseExpiresInDays);
         lic.setTransactionExpiresInHours(transactionExpiresInHours);

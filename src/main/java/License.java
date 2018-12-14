@@ -4,11 +4,18 @@ import java.io.Serializable;
 import java.time.*;
 import java.time.LocalDate;
 
+/**
+ * Merchant chooses the desired denomination of payment. bllm tracks favored payment method but also
+ * converts to dollars and satoshis at the time of payment.
+ *
+ * @cost number of units being requested
+ * @unitsOfCost what the merchant is requesting, possibly in dollars
+ * @unitsOfRequestedPayment Bitcoin or Litecoin
+ * @satoshisSubmitted what was paid whether Bitcoin or Litecoin
+ * @dollarsSubmitted: obtained by conversion at the time of payment
+ */
 public class License implements Serializable {
-  /**
-   * Merchant chooses the desired denomination of payment. bllm tracks favored payment method but
-   * also converts to dollars and satoshis at the time of payment.
-   */
+
   private static final long serialVersionUID = 1L;
 
   private String merchantWalletID;
@@ -17,16 +24,16 @@ public class License implements Serializable {
   private double satoshisSubmitted;
   private double dollarSubmitted;
   private double cost;
-  private double amountPaid;
+  private String unitsOfCost;
+  private String unitsOfRequestedPayment;
 
   private String licenseID;
   private String transactionID;
   private int requiredConfirmations;
   private int licenseExpiresInDays;
   private int trialExpiresInDays;
-  private String unitsOfCost;
-  private String unitsOfPayment;
   private int transactionExpiresInHours;
+  // private double amountPaid;
 
   public License() {}
 
@@ -37,11 +44,11 @@ public class License implements Serializable {
   public String getLicenseID() {
     return this.licenseID;
   }
-
+  /*
   public double getAmountPaid() {
     return this.amountPaid;
   }
-
+  */
   public double getCost() {
     return this.cost;
   }
@@ -106,12 +113,12 @@ public class License implements Serializable {
     this.unitsOfCost = s;
   }
 
-  public String getUnitsOfPayment() {
+  public String getUnitsOfRequestedPayment() {
     return this.unitsOfCost;
   }
 
-  public void setUnitsOfPayment(String s) {
-    this.unitsOfPayment = s;
+  public void setUnitsOfRequestedPayment(String s) {
+    this.unitsOfRequestedPayment = s;
   }
 
   public int getRequiredConfirmations() {
