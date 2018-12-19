@@ -6,17 +6,12 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.awt.event.ActionEvent;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.security.*;
 import java.util.List;
 import java.util.logging.*;
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -52,6 +47,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   private JLabel numberOfWalletIDsLabel;
   private JLabel cryptoLabel;
   private JLabel favoredCrytpocurrencyLabel;
+  private JLabel unitsOfRequestedPaymentLabel;
 
   private JComboBox<String> costunits;
   private String[] cryptoOptionsWSelect = {"Select", "Bitcoin", "Litecoin"};
@@ -67,15 +63,14 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
   private JComboBox<Integer> expiresList;
   private JComboBox<Integer> trialExpiresDaysList;
   private License lic;
-  private SecretKey key64;
-  private Cipher cipher;
   private String keyString = new String("nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ");
+  private LicenseReaderWriter licReaderWriter;
 
   public LicenseKeyGenerator() {
     setTitle("BLLM License Key Generator  " + java.time.LocalDate.now());
     setResizable(true);
     LOGGER.setLevel(Level.INFO);
-
+    licReaderWriter = new LicenseReaderWriter(this, keyString);
     // https://randomkeygen.com/
     // https://stackoverflow.com/questions/16950833/is-there-an-easy-way-to-encrypt-a-java-object
 
@@ -283,7 +278,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
     costField.getDocument().addDocumentListener(this);
 
     costunits = new JComboBox<String>(unitOfCostList);
-    costunits.setSelectedIndex(0);
+    // costunits.setSelectedIndex(0);
     costunits.setEnabled(false);
     c.gridx = 2;
     c.gridy = 9;
@@ -291,9 +286,23 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
 
     panel1.add(costunits, c);
 
-    JButton cancelButton = new JButton("Cancel");
+    label = new JLabel("Payment requested in: ");
     c.gridx = 0;
     c.gridy = 10;
+    c.gridwidth = 1;
+    c.anchor = GridBagConstraints.LINE_END;
+    panel1.add(label, c);
+
+    unitsOfRequestedPaymentLabel = new JLabel("NA");
+    c.gridx = 1;
+    c.gridy = 10;
+    c.gridwidth = 2;
+    c.anchor = GridBagConstraints.LINE_START;
+    panel1.add(unitsOfRequestedPaymentLabel, c);
+
+    JButton cancelButton = new JButton("Cancel");
+    c.gridx = 0;
+    c.gridy = 11;
     c.gridwidth = 1;
     cancelButton.setMnemonic(KeyEvent.VK_C);
 
@@ -309,7 +318,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
 
     generateButton = new JButton("Generate licenses");
     c.gridx = 1;
-    c.gridy = 10;
+    c.gridy = 11;
     c.gridwidth = 2;
     c.anchor = GridBagConstraints.LINE_START;
 
@@ -347,6 +356,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       licenseExpiresInDays = ((Integer) expiresDaysList.getSelectedItem()).intValue();
       transactionExpiresInHours = ((Integer) expiresList.getSelectedItem()).intValue();
       trialExpiresInDays = ((Integer) trialExpiresDaysList.getSelectedItem()).intValue();
+      // unitsOfRequestedPayment =
 
       generateLicenses();
       walletIDsFileSelected = true;
@@ -364,6 +374,9 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
         this.fileNameLabel.setText(file.getPath());
         this.directoryNameLabel.setText(file.getParent());
         this.readWalletIDfile();
+        LOGGER.info(
+            "In e.getSource() == getWalletIDsButton; this.unitsOfRequestedPayment: "
+                + this.unitsOfRequestedPayment);
       } else {
 
       }
@@ -374,17 +387,22 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
 
       switch ((String) cryptocurrencyList.getSelectedItem()) {
         case "Bitcoin":
-          unitsOfRequestedPayment = "Bitcoin";
+          this.unitsOfRequestedPayment = "Bitcoin";
+          unitsOfRequestedPaymentLabel.setText("Bitcoin");
           costunits.setModel(bitcoinUnitOfCostList);
           displayCryptoIcon();
 
           break;
         case "Litecoin":
-          unitsOfRequestedPayment = "Litecoin";
+          this.unitsOfRequestedPayment = "Litecoin";
+          unitsOfRequestedPaymentLabel.setText("Litecoin");
           costunits.setModel(litecoinUnitOfCostList);
 
           displayCryptoIcon();
       }
+      LOGGER.info(
+          "In e.getSource() == cryptocurrencyList); this.unitsOfRequestedPayment: "
+              + this.unitsOfRequestedPayment);
     }
   }
 
@@ -432,7 +450,9 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
 
       switch (firstCharacter) {
         case "1":
-          unitsOfRequestedPayment = "Bitcoin";
+          this.unitsOfRequestedPayment = "Bitcoin";
+          unitsOfRequestedPaymentLabel.setText("Bitcoin");
+
           costunits.addItem("Bitcoin");
           displayCryptoIcon();
           break;
@@ -441,7 +461,7 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
           cryptocurrencyList.setVisible(true);
           break;
         case "L":
-          unitsOfRequestedPayment = "Litecoin";
+          this.unitsOfRequestedPayment = "Litecoin";
           costunits.addItem("Litecoin");
           displayCryptoIcon();
           break;
@@ -454,12 +474,12 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       }
 
     } catch (IOException ex) {
-      LOGGER.info("IOException is caught");
+      LOGGER.info("IOException is caught in LicenseKeyGenerator");
     }
   }
 
   public void displayCryptoIcon() {
-    costunits.setSelectedIndex(0);
+    // costunits.setSelectedIndex(0);
     costunits.setEnabled(true);
     getWalletIDsButton.setEnabled(false);
 
@@ -467,10 +487,13 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
       case "Bitcoin":
         cryptoLabel.setIcon(
             new javax.swing.ImageIcon(LicenseKeyGenerator.class.getResource("images/btc2.png")));
+        unitsOfRequestedPaymentLabel.setText("Bitcoin");
+
         break;
       case "Litecoin":
         cryptoLabel.setIcon(
             new javax.swing.ImageIcon(LicenseKeyGenerator.class.getResource("images/ltc2.png")));
+        unitsOfRequestedPaymentLabel.setText("Litecoin");
     }
 
     if ((walletIDsFileSelected) && (costEntered)) {
@@ -481,56 +504,39 @@ public class LicenseKeyGenerator extends javax.swing.JFrame
 
   public void generateLicenses() {
     LOGGER.info("Secret key: " + keyString);
+    LOGGER.info(
+        "In generateLicenses(); this.unitsOfRequestedPayment: " + this.unitsOfRequestedPayment);
 
-    try {
-      for (int i = 1; i < walletids.size(); i++) {
-        String uuid = java.util.UUID.randomUUID().toString();
-        License lic = new License();
-        lic.setLicenseID(uuid);
-        lic.setCost(cost.doubleValue());
-        lic.setUnitsOfCost(unitOfCost);
-        lic.setUnitsOfRequestedPayment(unitsOfRequestedPayment);
-        lic.setRequiredConfirmations(requiredConfirmations);
-        lic.setLicenseExpiresInDays(licenseExpiresInDays);
-        lic.setTransactionExpiresInHours(transactionExpiresInHours);
-        lic.setTrialExpiresInDays(trialExpiresInDays);
-        lic.setMerchantWalletID(walletids.get(i));
-        (walletids.get(i)).length();
+    for (int i = 1; i < walletids.size(); i++) {
+      String uuid = java.util.UUID.randomUUID().toString();
+      License lic = new License();
+      lic.setLicenseID(uuid);
+      lic.setCost(cost.doubleValue());
+      lic.setUnitsOfCost(unitOfCost);
+      LOGGER.info(
+          "In generateLicenses() before setting lic; this.unitsOfRequestedPayment: "
+              + this.unitsOfRequestedPayment);
+      lic.setUnitsOfRequestedPayment(this.unitsOfRequestedPayment);
+      lic.setRequiredConfirmations(requiredConfirmations);
+      lic.setLicenseExpiresInDays(licenseExpiresInDays);
+      lic.setTransactionExpiresInHours(transactionExpiresInHours);
+      lic.setTrialExpiresInDays(trialExpiresInDays);
+      lic.setMerchantWalletID(walletids.get(i));
+      (walletids.get(i)).length();
 
-        // String string = new String("nszpx5U5Kt6d91JB3CW31n3SiNjSUzcZ");
-        key64 = new SecretKeySpec(getKeyString().getBytes(), "Blowfish");
-        cipher = Cipher.getInstance("Blowfish");
-        cipher.init(Cipher.ENCRYPT_MODE, key64);
-        SealedObject sealedObject = new SealedObject(lic, cipher);
-        String dirname =
-            new String(
-                (walletids.get(i))
-                    .substring((walletids.get(i)).length() - 8, (walletids.get(i)).length()));
+      String dirname =
+          new String(
+              (walletids.get(i))
+                  .substring((walletids.get(i)).length() - 8, (walletids.get(i)).length()));
 
-        new File(directoryNameLabel.getText() + "/license/" + dirname).mkdirs();
+      new File(directoryNameLabel.getText() + "/license/" + dirname).mkdirs();
 
-        String fileName =
-            new String(directoryNameLabel.getText() + "/license/" + dirname + "/license.ser");
+      String fileName =
+          new String(directoryNameLabel.getText() + "/license/" + dirname + "/license.ser");
 
-        CipherOutputStream cipherOutputStream =
-            new CipherOutputStream(
-                new BufferedOutputStream(new FileOutputStream(fileName)), cipher);
-        ObjectOutputStream outputStream = new ObjectOutputStream(cipherOutputStream);
-        outputStream.writeObject(sealedObject);
-        outputStream.close();
-      }
-      JOptionPane.showMessageDialog(this, "Licenses have been serialized.", "Information", 1);
-    } catch (IOException ex) {
-      System.out.println("IOException is caught");
-    } catch (IllegalBlockSizeException ex) {
-
-    } catch (NoSuchAlgorithmException ex) {
-
-    } catch (InvalidKeyException ex) {
-
-    } catch (NoSuchPaddingException ex) {
-
+      licReaderWriter.writeLicense(fileName, lic);
     }
+    JOptionPane.showMessageDialog(this, "Licenses have been serialized.", "Information", 1);
   }
 
   public void setKeyString(String s) {

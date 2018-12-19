@@ -18,7 +18,7 @@ public class CryptoPanel extends javax.swing.JPanel
   private JButton cancelButton;
   private JLabel text4 = new JLabel("This new key must be utilized in the DialogLicenseManager");
   private JLabel text5 = new JLabel("constructor!");
-  private JLabel text6 = new JLabel("Recomendation: use the provided key.");
+  // private JLabel text6 = new JLabel("Recomendation: use the provided key.");
 
   private LicenseKeyGenerator parent;
 
@@ -69,11 +69,13 @@ public class CryptoPanel extends javax.swing.JPanel
     c.gridwidth = 1;
     add(checkmarkLabel, c);
 
+    /*
     c.gridx = 0;
     c.gridy = 4;
     c.gridwidth = 5;
     c.anchor = GridBagConstraints.LINE_START;
     add(text6, c);
+    */
 
     c.gridx = 0;
     c.gridy = 4;
@@ -98,7 +100,7 @@ public class CryptoPanel extends javax.swing.JPanel
         parent.setKeyString(keyField.getText());
         checkmarkLabel.setIcon(
             new javax.swing.ImageIcon(CryptoPanel.class.getResource("images/green-check.png")));
-        text6.setVisible(false);
+        //        text6.setVisible(false);
         text4.setVisible(true);
         text5.setVisible(true);
 

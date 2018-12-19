@@ -25,6 +25,7 @@ public class License implements Serializable {
   private double dollarSubmitted;
   private double cost;
   private String unitsOfCost;
+  private double actualPayment;
   private String unitsOfRequestedPayment;
 
   private String licenseID;
@@ -33,7 +34,6 @@ public class License implements Serializable {
   private int licenseExpiresInDays;
   private int trialExpiresInDays;
   private int transactionExpiresInHours;
-  // private double amountPaid;
 
   public License() {}
 
@@ -44,11 +44,7 @@ public class License implements Serializable {
   public String getLicenseID() {
     return this.licenseID;
   }
-  /*
-  public double getAmountPaid() {
-    return this.amountPaid;
-  }
-  */
+
   public double getCost() {
     return this.cost;
   }
@@ -114,11 +110,19 @@ public class License implements Serializable {
   }
 
   public String getUnitsOfRequestedPayment() {
-    return this.unitsOfCost;
+    return this.unitsOfRequestedPayment;
   }
 
   public void setUnitsOfRequestedPayment(String s) {
     this.unitsOfRequestedPayment = s;
+  }
+
+  public double getActualPayment() {
+    return this.actualPayment;
+  }
+
+  public void setActualPayment(double d) {
+    this.actualPayment = d;
   }
 
   public int getRequiredConfirmations() {
@@ -139,6 +143,10 @@ public class License implements Serializable {
 
   public void setSatoshisSubmitted(double d) {
     this.satoshisSubmitted = d;
+  }
+
+  public double getSatoshisSubmitted() {
+    return this.satoshisSubmitted;
   }
 
   public double getLTCSubmitted() {
