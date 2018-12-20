@@ -97,13 +97,27 @@ task signAll(dependsOn: [copyFiles]) << {
 }
 
 
-task copyToWeb(type: Copy, dependsOn: [signAll]) {
+task copyWebstartToWeb(type: Copy, dependsOn: [signAll]) {
    // from configurations.runtime
     from("webstart/signed")
     into("/home/mbc/syncd/stihie/source/_posts/2018-08-09-bllmlkg")
     include('*.jar', '*.jnlp')
 }
 
+
+task myJavadocs(type: Javadoc) {
+  source = sourceSets.main.allJava
+}
+
+
+task copyJavaDocsToWeb(type: Copy, dependsOn: [myJavadocs]) {
+   // from configurations.runtime
+    from("build/docs/.")
+    into("/home/mbc/syncd/stihie/source/_posts/2018-08-09-bllmlkg")
+    include('*.html', '*.js', '*.js')
+    include('javadoc/**')
+    
+}
 
 
 

@@ -7,12 +7,6 @@ import java.time.LocalDate;
 /**
  * Merchant chooses the desired denomination of payment. bllm tracks favored payment method but also
  * converts to dollars and satoshis at the time of payment.
- *
- * @cost number of units being requested
- * @unitsOfCost what the merchant is requesting, possibly in dollars
- * @unitsOfRequestedPayment Bitcoin or Litecoin
- * @satoshisSubmitted what was paid whether Bitcoin or Litecoin
- * @dollarsSubmitted: obtained by conversion at the time of payment
  */
 public class License implements Serializable {
 
@@ -45,6 +39,14 @@ public class License implements Serializable {
     return this.licenseID;
   }
 
+  /**
+   * A double. Could be in any units.
+   *
+   * @see actualPayment what was actually tendered
+   * @see requestedPayment used as variable in other classes
+   * @see _unitsOfCost to determine the units involved
+   * @return cost number of units being requested
+   */
   public double getCost() {
     return this.cost;
   }
@@ -101,20 +103,23 @@ public class License implements Serializable {
     this.transactionExpiresInHours = i;
   }
 
+  /** @return unitsOfCost */
   public String getUnitsOfCost() {
     return this.unitsOfCost;
   }
 
-  public void setUnitsOfCost(String s) {
-    this.unitsOfCost = s;
+  /** @param _unitsOfCost what the merchant is requesting, possibly in dollars */
+  public void setUnitsOfCost(String _unitsOfCost) {
+    this.unitsOfCost = _unitsOfCost;
   }
 
   public String getUnitsOfRequestedPayment() {
     return this.unitsOfRequestedPayment;
   }
 
-  public void setUnitsOfRequestedPayment(String s) {
-    this.unitsOfRequestedPayment = s;
+  /** @param _unitsOfRequestedPayment Bitcoin or Litecoin */
+  public void setUnitsOfRequestedPayment(String _unitsOfRequestedPayment) {
+    this.unitsOfRequestedPayment = _unitsOfRequestedPayment;
   }
 
   public double getActualPayment() {
@@ -141,8 +146,9 @@ public class License implements Serializable {
     this.merchantWalletID = s;
   }
 
-  public void setSatoshisSubmitted(double d) {
-    this.satoshisSubmitted = d;
+  /** @param _satoshisSubmitted what was paid whether Bitcoin or Litecoin */
+  public void setSatoshisSubmitted(double _satoshisSubmitted) {
+    this.satoshisSubmitted = _satoshisSubmitted;
   }
 
   public double getSatoshisSubmitted() {
@@ -153,8 +159,9 @@ public class License implements Serializable {
     return this.satoshisSubmitted;
   }
 
-  public void setDollarSubmitted(double d) {
-    this.dollarSubmitted = d;
+  /** @param _dollarSubmitted obtained by conversion at the time of payment */
+  public void setDollarSubmitted(double _dollarSubmitted) {
+    this.dollarSubmitted = _dollarSubmitted;
   }
 
   public double getDollarSubmitted() {
